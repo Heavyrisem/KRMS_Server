@@ -8,7 +8,7 @@ import cors from 'cors';
 import SHA256 from './SHA256';
 import RandomToken from './RandomToken';
 
-import { ClientInfo, ClientUsage, DBAccount, DBServer, DBServerUsage, System } from '../Types';
+import { ClientInfo, ClientUsage, DBAccount, DBServer, DBServerUsage, System } from './Types';
 import SocketIO from 'socket.io';
 
 let DB_Client: mongo.MongoClient;
