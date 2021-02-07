@@ -136,6 +136,23 @@ Monitor.post('/Monitor/RemoveServer', async (req, res) => {
     }
 })
 
+Monitor.post('/Monitor/RenameServer', async (req, res) => {
+    if (!req.body.token || !req.body.macaddr || !req.body.NewName) return res.send({err: "WORNG_DATA"});
+    let DB = await DB_Client.db();
+
+    let Account: DBAccount | null = await DB.collection('Accounts').findOne({token: req.body.token});
+    if (Account) {
+        if (await DB.collection('Servers').findOne({macaddr: req.body.macaddr}) && (Account.Servers.indexOf(req.body.macaddr) != -1)) {
+            await DB.collection('Servers').updateOne({macaddr: req.body.macaddr}, {name: req.body.NewName});
+            res.send({msg: "SUCCESS"});
+        } else {
+            res.send({err: "NOT_FOUND"});
+        }
+    } else {
+        res.send({err: "FAIL_AUTHORIZE"});
+    }
+})
+
 MonitorServer.listen(8898, async () => {
     const DB_config: mongo.MongoClientOptions = {
         useUnifiedTopology: true,
