@@ -143,7 +143,7 @@ Monitor.post('/Monitor/RenameServer', async (req, res) => {
     let Account: DBAccount | null = await DB.collection('Accounts').findOne({token: req.body.token});
     if (Account) {
         if (await DB.collection('Servers').findOne({macaddr: req.body.macaddr}) && (Account.Servers.indexOf(req.body.macaddr) != -1)) {
-            await DB.collection('Servers').updateOne({macaddr: req.body.macaddr}, {name: req.body.NewName});
+            await DB.collection('Servers').updateOne({macaddr: req.body.macaddr}, {$set: {name: req.body.NewName}});
             res.send({msg: "SUCCESS"});
         } else {
             res.send({err: "NOT_FOUND"});
