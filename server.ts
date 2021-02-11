@@ -24,7 +24,8 @@ Monitor.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 
 Monitor.post('/Monitor/ServerLogin', async (req, res) => {
-    if (!req.body) return res.send({err: "WRONG_DATA"});
+    return res.send({err: "THIS API IS DEPRECATED"});
+    if (!req.body.ServerInfo) return res.send({err: "WRONG_DATA"});
     let DB = await DB_Client.db();
 
     let Client: ClientInfo = req.body.ServerInfo;
@@ -179,11 +180,14 @@ MonitorServer.listen(8898, async () => {
             return Client.disconnect();
         }
         
+        let Account: DBAccount | null = await DB.collection('Accounts').findOne({ token: ClientData.user.token });
         let Server: DBServer | null = await DB.collection('Servers').findOne({ macaddr: ClientData.system.macaddr });
         if (Server) {
             console.log(Server.name);
-            if (await (await DB.collection('Servers').updateOne({ macaddr: ClientData.system.macaddr }, { $set: { 'online': true } })).result.ok)
+            if (await (await DB.collection('Servers').updateOne({ macaddr: ClientData.system.macaddr }, { $set: { 'online': true } })).result.ok) {
+                if (Account?.Servers.indexOf(ClientData.system.macaddr) == -1) await DB.collection('Servers').updateOne({token: ClientData.user.token}, {$push: {Servers: ClientData.system.macaddr}});
                 Client.emit("Status", { ok: true });
+            }
             else Client.emit("Status", { ok: false });
 
         } else {
