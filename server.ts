@@ -185,10 +185,7 @@ MonitorServer.listen(8898, async () => {
         if (Server) {
             console.log(Server.name);
             if (await (await DB.collection('Servers').updateOne({ macaddr: ClientData.system.macaddr }, { $set: { 'online': true } })).result.ok) {
-                if (Account?.Servers.indexOf(ClientData.system.macaddr) == -1) {
-                    console.log(await DB.collection('Servers').updateOne({token: ClientData.user.token}, {$push: {Servers: ClientData.system.macaddr}}));
-                    console.log("Debug: 서버 추가");
-                }
+                if (Account?.Servers.indexOf(ClientData.system.macaddr) == -1) await DB.collection('Accounts').updateOne({token: ClientData.user.token}, {$push: {Servers: ClientData.system.macaddr}});
                 Client.emit("Status", { ok: true });
             }
             else Client.emit("Status", { ok: false });
