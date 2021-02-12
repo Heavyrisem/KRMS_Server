@@ -17,6 +17,7 @@ const MonitorServer = http.createServer(Monitor);
 const io = SocketIO(MonitorServer);
 
 Monitor.use(cors());
+Monitor.use(express.static('./web'));
 Monitor.use(bodyParser.json());       // to support JSON-encoded bodies
 Monitor.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
@@ -83,7 +84,7 @@ Monitor.post('/Monitor/Login', async (req, res) => {
     } else res.send({err: "LOGIN_FAILD"});
 })
 
-Monitor.post('/Monitor/GetServer', async (req, res) => {
+Monitor.post('/Monitor/GetServer', async (req, res) => { // token 입력 추가
     if (!req.body.macaddr) return res.send({err: "WRONG_DATA"});
     let DB = await DB_Client.db();
 
@@ -154,7 +155,7 @@ Monitor.post('/Monitor/RenameServer', async (req, res) => {
     }
 })
 
-MonitorServer.listen(8898, async () => {
+MonitorServer.listen(80, async () => {
     const DB_config: mongo.MongoClientOptions = {
         useUnifiedTopology: true,
         poolSize: 10
