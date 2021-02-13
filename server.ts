@@ -155,7 +155,7 @@ Monitor.post('/Monitor/RenameServer', async (req, res) => {
     }
 })
 
-MonitorServer.listen(80, async () => {
+MonitorServer.listen(8898, async () => {
     const DB_config: mongo.MongoClientOptions = {
         useUnifiedTopology: true,
         poolSize: 10
